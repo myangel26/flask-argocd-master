@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-deployment-argocd #The name of the Kubernetes Deployment to be created in the Kubernetes cluster
+  namespace: flask-argocd
+  labels:
+    app: flask-app-argocd
+spec:
+  replicas: 2 #The number of pods to be created in the Kubernetes cluster for the python application container
+  selector:
+    matchLabels:
+      app: flask-app-argocd
+  template:
+    metadata:
+      labels:
+        app: flask-app-argocd
+    spec:
+      containers:
+      - name: flask-app-argocd #The name of the python application container
+        image: truongphamxuan/flask-docker:latest #The Docker image for building the python application container
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000 #The port for the python application   container
