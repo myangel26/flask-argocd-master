@@ -37,11 +37,11 @@ pipeline {
   // khai báo ở đây thì chạy chung nguyên stage
 
   environment {
-    // DOCKER_IMAGE = "truongphamxuan/flask-docker"
-    // CREDENTIAL_ID = "docker-account"
-    // KUBERNETES_CONFIG = "kube-config"
-    // NAMESPACE = "flask-project"
-    // DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
+    DOCKER_IMAGE = "truongphamxuan/flask-docker"
+    CREDENTIAL_ID = "docker-account"
+    KUBERNETES_CONFIG = "kube-config"
+    NAMESPACE = "flask-project"
+    DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
   }
 
   stages{
