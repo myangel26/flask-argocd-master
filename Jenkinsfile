@@ -49,6 +49,7 @@ pipeline {
     stage("TEST"){
       steps {
         sh "echo ${DOCKER_TAG}"
+        sh "echo ${BUILD_ID}"
       }
     }
 
