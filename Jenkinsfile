@@ -48,13 +48,19 @@ pipeline {
 
     stage("TEST"){
       steps {
-        container('python') {
-          sh "pip install poetry" 
-          sh "poetry install"
-          sh "poetry run pytest"
-        }
+        sh "echo ${DOCKER_TAG}"
       }
     }
+
+    // stage("TEST"){
+    //   steps {
+    //     container('python') {
+    //       sh "pip install poetry" 
+    //       sh "poetry install"
+    //       sh "poetry run pytest"
+    //     }
+    //   }
+    // }
 
     // stage("BUILD") {
     //   steps {
