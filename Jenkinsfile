@@ -40,19 +40,11 @@ pipeline {
     DOCKER_IMAGE = "truongphamxuan/flask-docker"
     CREDENTIAL_ID = "docker-account"
     KUBERNETES_CONFIG = "kube-config"
-    NAMESPACE = "flask-project"
+    NAMESPACE = "flask-argocd"
     DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
   }
 
   stages{
-
-    stage('Cleanup Workspace'){
-        steps {
-            script {
-                cleanWs()
-            }
-        }
-    }
 
     stage("TEST"){
       steps {
@@ -83,6 +75,15 @@ pipeline {
     //     }
     //   }
     // }
+
+    stage('Cleanup Workspace'){
+        steps {
+            script {
+                cleanWs()
+            }
+        }
+    }
+
   }
 
   post{
