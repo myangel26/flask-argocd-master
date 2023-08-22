@@ -23,6 +23,13 @@ pipeline {
               volumeMounts:
               - mountPath: /var/run/docker.sock
                 name: docker-sock
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "500m"
+            limits:
+              memory: "600Mi"
+              cpu: "1" 
           volumes:
             - name: python-cache
               hostPath:
