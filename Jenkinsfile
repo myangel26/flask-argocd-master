@@ -49,7 +49,7 @@ pipeline {
     CREDENTIAL_ID = "docker-account"
     KUBERNETES_CONFIG = "kube-config"
     NAMESPACE = "flask-argocd"
-    DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
+    // DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
   }
 
   stages{
