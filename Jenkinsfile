@@ -1,46 +1,46 @@
 pipeline {
-  agent {
-    kubernetes{
-      yaml '''
-        apiVersion: v1
-        kind: Pod
-        spec:
-          serviceAccountName: jenkins-admin
-          containers:
-            - name: python
-              image: python:3.8-slim-buster
-              command:
-              - cat
-              tty: true
-              volumeMounts:
-              - mountPath: /root/.cache
-                name: python-cache
-            - name: docker
-              image: docker:latest
-              command:
-              - cat
-              tty: true
-              volumeMounts:
-              - mountPath: /var/run/docker.sock
-                name: docker-sock
-          resources:
-            requests:
-              memory: "300Mi"
-              cpu: "500m"
-            limits:
-              memory: "600Mi"
-              cpu: "1" 
-          volumes:
-            - name: python-cache
-              hostPath:
-                path: /tmp
-            - name: docker-sock
-              hostPath:
-                path: /var/run/docker.sock
-      '''
-    }
-  }
-  // agent none
+  // agent {
+  //   kubernetes{
+  //     yaml '''
+  //       apiVersion: v1
+  //       kind: Pod
+  //       spec:
+  //         serviceAccountName: jenkins-admin
+  //         containers:
+  //           - name: python
+  //             image: python:3.8-slim-buster
+  //             command:
+  //             - cat
+  //             tty: true
+  //             volumeMounts:
+  //             - mountPath: /root/.cache
+  //               name: python-cache
+  //           - name: docker
+  //             image: docker:latest
+  //             command:
+  //             - cat
+  //             tty: true
+  //             volumeMounts:
+  //             - mountPath: /var/run/docker.sock
+  //               name: docker-sock
+  //         resources:
+  //           requests:
+  //             memory: "300Mi"
+  //             cpu: "500m"
+  //           limits:
+  //             memory: "600Mi"
+  //             cpu: "1" 
+  //         volumes:
+  //           - name: python-cache
+  //             hostPath:
+  //               path: /tmp
+  //           - name: docker-sock
+  //             hostPath:
+  //               path: /var/run/docker.sock
+  //     '''
+  //   }
+  // }
+  agent none
   // None: khia báo agent khia chạy từng stage
   // khai báo ở đây thì chạy chung nguyên stage
 
