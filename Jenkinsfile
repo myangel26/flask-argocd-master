@@ -40,7 +40,7 @@ pipeline {
   //     '''
   //   }
   // }
-  agent none
+  agent any
   // None: khia báo agent khia chạy từng stage
   // khai báo ở đây thì chạy chung nguyên stage
 
