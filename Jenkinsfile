@@ -48,10 +48,9 @@ pipeline {
 
     stage("TEST"){
       steps {
-        sh "echo ${DOCKER_TAG}"
-        sh "echo ${BUILD_ID}"
-        sh "echo ${BUILD_NUMBER}"
-        sh "echo ${BUILD_TAG}"
+        script {
+          sh "docker --version"
+        }
       }
     }
 
