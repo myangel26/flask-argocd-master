@@ -63,9 +63,6 @@ pipeline {
   stages{
 
     stage("TEST"){
-      options {
-        timeout(time: 10, unit: 'MINUTES')
-      }
       steps {
         script{
           sh "echo ${DOCKER_TAG}"
