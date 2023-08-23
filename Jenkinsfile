@@ -54,10 +54,10 @@ pipeline {
 
   options {
     timestamps()
-    // timeout(time: 180, unit: 'MINUTES')
-    // ansiColor('xterm')
-    // disableConcurrentBuilds()
-    // buildDiscarder(logRotator(numToKeepStr: '250', daysToKeepStr: '5'))
+    timeout(time: 180, unit: 'MINUTES')
+    ansiColor('xterm')
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(numToKeepStr: '250', daysToKeepStr: '5'))
   }
 
   stages{
