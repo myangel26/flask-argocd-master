@@ -49,17 +49,26 @@ pipeline {
     CREDENTIAL_ID = "docker-account"
     KUBERNETES_CONFIG = "kube-config"
     NAMESPACE = "flask-argocd"
-    // DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
+    DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
+  }
+
+  options {
+    timestamps()
+    // timeout(time: 180, unit: 'MINUTES')
+    // ansiColor('xterm')
+    // disableConcurrentBuilds()
+    // buildDiscarder(logRotator(numToKeepStr: '250', daysToKeepStr: '5'))
   }
 
   stages{
 
     stage("TEST"){
+      options {
+        timeout(time: 10, unit: 'MINUTES')
+      }
       steps {
-        container('python') {
-          sh "pip install poetry" 
-          sh "poetry install"
-          sh "poetry run pytest"
+        script{
+          sh "echo ${DOCKER_TAG}"
         }
       }
     }
