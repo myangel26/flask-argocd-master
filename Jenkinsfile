@@ -73,7 +73,7 @@ pipeline {
 
     stage('docker-build') {
       options {
-        timeout(time: 2, unit: 'SECONDS')
+        timeout(time: 120, unit: 'SECONDS')
       }
 
       steps {
