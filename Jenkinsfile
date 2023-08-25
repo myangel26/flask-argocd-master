@@ -62,6 +62,15 @@ pipeline {
 
   stages{
 
+    stage('Get GIT_COMMIT') {
+      steps {
+        script {
+          GIT_COMMIT = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
+          sh "echo GIT_COMMIT: ${DOCKER_TAG}"
+        }
+      }
+    }
+
     stage("TEST"){
       steps {
         script{
