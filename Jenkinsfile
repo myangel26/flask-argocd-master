@@ -71,6 +71,19 @@ pipeline {
       }
     }
 
+    stage('docker-build') {
+      options {
+        timeout(time: 10, unit: 'SECONDS')
+      }
+
+      steps {
+        sh '''#!/usr/bin/env bash
+          echo "Shell Process ID: $$"
+          docker build --tag ${DOCKER_IMAGE}:${GIT_COMMIT} .
+        '''
+      }
+    }
+
     stage("TEST"){
       steps {
         script{
