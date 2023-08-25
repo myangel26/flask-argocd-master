@@ -66,14 +66,14 @@ pipeline {
       steps {
         script {
           GIT_COMMIT = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
-          sh "echo GIT_COMMIT: ${DOCKER_TAG}"
+          sh "echo GIT_COMMIT: ${GIT_COMMIT}"
         }
       }
     }
 
     stage('docker-build') {
       options {
-        timeout(time: 10, unit: 'SECONDS')
+        timeout(time: 2, unit: 'SECONDS')
       }
 
       steps {
@@ -81,6 +81,7 @@ pipeline {
           echo "Shell Process ID: $$"
         '''
         container('docker'){
+          sh "docker build -t ${DOCKER_IMAGE}:${GIT_COMMIT} ."
           withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
             sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
           }
