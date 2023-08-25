@@ -77,19 +77,14 @@ pipeline {
       }
 
       steps {
+        sh '''#!/usr/bin/env bash
+          echo "Shell Process ID: $$"
+        '''
         container('docker'){
-          sh '''#!/usr/bin/env bash
-            echo "Shell Process ID: $$"
-          '''
           withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
             sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
           }
         }
-
-        sh '''#!/usr/bin/env bash
-          echo "Shell Process ID: $$"
-          docker build --tag ${DOCKER_IMAGE}:${GIT_COMMIT} .
-        '''
       }
     }
 
