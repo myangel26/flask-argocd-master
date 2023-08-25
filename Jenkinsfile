@@ -54,10 +54,10 @@ pipeline {
 
   options {
     timestamps()
-    timeout(time: 180, unit: 'MINUTES')
+    timeout(time: 180, unit: 'MINUTES') // sau 180 phút, pipeline sẽ được hủy
     ansiColor('xterm')
     disableConcurrentBuilds()
-    buildDiscarder(logRotator(numToKeepStr: '250', daysToKeepStr: '5'))
+    // buildDiscarder(logRotator(numToKeepStr: '250', daysToKeepStr: '5'))
   }
 
   stages{
