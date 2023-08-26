@@ -62,6 +62,14 @@ pipeline {
 
   stages{
 
+    stage("TEST"){
+      steps {
+        script{
+          sh "echo ${DOCKER_TAG}"
+        }
+      }
+    }
+
     stage('Get GIT_COMMIT') {
       steps {
         script {
@@ -81,21 +89,18 @@ pipeline {
           echo "Shell Process ID: $$"
         '''
         container('docker'){
-          sh "docker build -t ${DOCKER_IMAGE}:${GIT_COMMIT} ."
+          sh "docker build -t ${DOCKER_IMAGE}:${GIT_COMMIT} . "
           withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
             sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
+            sh "docker push ${DOCKER_IMAGE}:${GIT_COMMIT}"
           }
+          // clean to save disk
+          sh "docker image rm ${DOCKER_IMAGE}:${GIT_COMMIT}"
         }
       }
     }
 
-    stage("TEST"){
-      steps {
-        script{
-          sh "echo ${DOCKER_TAG}"
-        }
-      }
-    }
+    
 
     // stage("BUILD") {
     //   steps {
@@ -117,13 +122,13 @@ pipeline {
     //   }
     // }
 
-    // stage('Cleanup Workspace'){
-    //     steps {
-    //         script {
-    //             cleanWs()
-    //         }
-    //     }
-    // }
+    stage('Cleanup Workspace'){
+        steps {
+            script {
+                cleanWs()
+            }
+        }
+    }
 
   }
 
