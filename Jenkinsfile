@@ -50,11 +50,15 @@ pipeline {
     KUBERNETES_CONFIG = "kube-config"
     NAMESPACE = "flask-argocd"
     DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
+    GITHUB_EMAIL = "truongphamxuan2604@gmail.com"
+    GITHUB_NAME = "truong"
+    GITHUB_ACC = credentials('github-account').username
+    GITHUB_PWD = credentials('github-account').password
   }
 
   options {
     timestamps()
-    timeout(time: 180, unit: 'MINUTES') // sau 180 phút, pipeline sẽ được hủy
+    timeout(time: 15, unit: 'MINUTES') // sau 180 phút, pipeline sẽ được hủy
     ansiColor('xterm')
     disableConcurrentBuilds()
     // buildDiscarder(logRotator(numToKeepStr: '250', daysToKeepStr: '5'))
@@ -62,10 +66,20 @@ pipeline {
 
   stages{
 
-    stage("TEST"){
+    stage("ECHO"){
       steps {
         script{
           sh "echo ${DOCKER_TAG}"
+        }
+      }
+    }
+
+    stage("TEST"){
+      steps {
+        container('python') {
+          sh "pip install poetry" 
+          sh "poetry install"
+          sh "poetry run pytest"
         }
       }
     }
@@ -87,6 +101,13 @@ pipeline {
       steps {
         sh '''#!/usr/bin/env bash
           echo "Shell Process ID: $$"
+          git config --global user.email ${GITHUB_EMAIL}
+          git config --global user.name ${GITHUB_NAME}
+          echo pwd
+          rm -rf flask-argocd-k8s
+          git clone https://$GITHUB_ACC:$GITHUB_PWD@github.com/myangel26/flask-argocd-k8s.git
+          cd flask-argocd-k8s
+          ls -la
         '''
         container('docker'){
           sh "docker build -t ${DOCKER_IMAGE}:${GIT_COMMIT} . "
@@ -100,7 +121,13 @@ pipeline {
       }
     }
 
-    
+    stage('Deploy DEV') {
+      steps {
+        sh '''#!/usr/bin/env bash
+          echo "Shell Process ID: $$"
+        '''
+      }
+    }
 
     // stage("BUILD") {
     //   steps {
