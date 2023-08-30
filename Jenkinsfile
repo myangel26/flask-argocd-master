@@ -52,8 +52,8 @@ pipeline {
     DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
     GITHUB_EMAIL = "truongphamxuan2604@gmail.com"
     GITHUB_NAME = "truong"
-    GITHUB_ACC = credentials('github-account').username
-    GITHUB_PWD = credentials('github-account').password
+    GITHUB_ACC = "${credentials('github-account').username}"
+    GITHUB_PWD = "${credentials('github-account').password}"
   }
 
   options {
