@@ -1,6 +1,6 @@
 pipeline {
 
-  agent None
+  agent any
 
   // agent {
   //   kubernetes{
@@ -44,7 +44,7 @@ pipeline {
   //   }
   // }
   
-  // None: khia báo agent khia chạy từng stage
+  // None: khia báo agent khi ta chạy từng stage
   // khai báo ở đây thì chạy chung nguyên stage
 
   environment {
