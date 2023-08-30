@@ -1,48 +1,47 @@
 pipeline {
 
-  agent any
-
-  // agent {
-  //   kubernetes{
-  //     yaml '''
-  //       apiVersion: v1
-  //       kind: Pod
-  //       spec:
-  //         serviceAccountName: jenkins-admin
-  //         containers:
-  //           - name: python
-  //             image: python:3.8-slim-buster
-  //             command:
-  //             - cat
-  //             tty: true
-  //             volumeMounts:
-  //             - mountPath: /root/.cache
-  //               name: python-cache
-  //           - name: docker
-  //             image: docker:latest
-  //             command:
-  //             - cat
-  //             tty: true
-  //             volumeMounts:
-  //             - mountPath: /var/run/docker.sock
-  //               name: docker-sock
-  //         resources:
-  //           requests:
-  //             memory: "300Mi"
-  //             cpu: "500m"
-  //           limits:
-  //             memory: "600Mi"
-  //             cpu: "1" 
-  //         volumes:
-  //           - name: python-cache
-  //             hostPath:
-  //               path: /tmp
-  //           - name: docker-sock
-  //             hostPath:
-  //               path: /var/run/docker.sock
-  //     '''
-  //   }
-  // }
+  agent {
+    kubernetes{
+      yaml '''
+        apiVersion: v1
+        kind: Pod
+        spec:
+          serviceAccountName: jenkins-admin
+          containers:
+            - name: python
+              image: python:3.8-slim-buster
+              command:
+              - cat
+              tty: true
+              volumeMounts:
+              - mountPath: /root/.cache
+                name: python-cache
+            - name: docker
+              image: docker:latest
+              command:
+              - cat
+              tty: true
+              volumeMounts:
+              - mountPath: /var/run/docker.sock
+                name: docker-sock
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "500m"
+              ephemeral-storage: "2.5Gi"
+            limits:
+              memory: "600Mi"
+              cpu: "1" 
+          volumes:
+            - name: python-cache
+              hostPath:
+                path: /tmp
+            - name: docker-sock
+              hostPath:
+                path: /var/run/docker.sock
+      '''
+    }
+  }
   
   // None: khia báo agent khi ta chạy từng stage
   // khai báo ở đây thì chạy chung nguyên stage
@@ -77,15 +76,15 @@ pipeline {
       }
     }
 
-    // stage("TEST"){
-    //   steps {
-    //     container('python') {
-    //       sh "pip install poetry" 
-    //       sh "poetry install"
-    //       sh "poetry run pytest"
-    //     }
-    //   }
-    // }
+    stage("TEST"){
+      steps {
+        container('python') {
+          sh "pip install poetry" 
+          sh "poetry install"
+          sh "poetry run pytest"
+        }
+      }
+    }
 
     stage('Get GIT_COMMIT') {
       steps {
