@@ -16,14 +16,6 @@ pipeline {
               volumeMounts:
               - mountPath: /root/.cache
                 name: python-cache
-            - name: docker
-              image: docker:latest
-              command:
-              - cat
-              tty: true
-              volumeMounts:
-              - mountPath: /var/run/docker.sock
-                name: docker-sock
           resources:
             requests:
               memory: "300Mi"
@@ -36,9 +28,6 @@ pipeline {
             - name: python-cache
               hostPath:
                 path: /tmp
-            - name: docker-sock
-              hostPath:
-                path: /var/run/docker.sock
       '''
     }
   }
