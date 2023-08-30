@@ -1,45 +1,48 @@
 pipeline {
-  agent {
-    kubernetes{
-      yaml '''
-        apiVersion: v1
-        kind: Pod
-        spec:
-          serviceAccountName: jenkins-admin
-          containers:
-            - name: python
-              image: python:3.8-slim-buster
-              command:
-              - cat
-              tty: true
-              volumeMounts:
-              - mountPath: /root/.cache
-                name: python-cache
-            - name: docker
-              image: docker:latest
-              command:
-              - cat
-              tty: true
-              volumeMounts:
-              - mountPath: /var/run/docker.sock
-                name: docker-sock
-          resources:
-            requests:
-              memory: "300Mi"
-              cpu: "500m"
-            limits:
-              memory: "600Mi"
-              cpu: "1" 
-          volumes:
-            - name: python-cache
-              hostPath:
-                path: /tmp
-            - name: docker-sock
-              hostPath:
-                path: /var/run/docker.sock
-      '''
-    }
-  }
+
+  agent None
+
+  // agent {
+  //   kubernetes{
+  //     yaml '''
+  //       apiVersion: v1
+  //       kind: Pod
+  //       spec:
+  //         serviceAccountName: jenkins-admin
+  //         containers:
+  //           - name: python
+  //             image: python:3.8-slim-buster
+  //             command:
+  //             - cat
+  //             tty: true
+  //             volumeMounts:
+  //             - mountPath: /root/.cache
+  //               name: python-cache
+  //           - name: docker
+  //             image: docker:latest
+  //             command:
+  //             - cat
+  //             tty: true
+  //             volumeMounts:
+  //             - mountPath: /var/run/docker.sock
+  //               name: docker-sock
+  //         resources:
+  //           requests:
+  //             memory: "300Mi"
+  //             cpu: "500m"
+  //           limits:
+  //             memory: "600Mi"
+  //             cpu: "1" 
+  //         volumes:
+  //           - name: python-cache
+  //             hostPath:
+  //               path: /tmp
+  //           - name: docker-sock
+  //             hostPath:
+  //               path: /var/run/docker.sock
+  //     '''
+  //   }
+  // }
   
   // None: khia báo agent khia chạy từng stage
   // khai báo ở đây thì chạy chung nguyên stage
@@ -74,15 +77,15 @@ pipeline {
       }
     }
 
-    stage("TEST"){
-      steps {
-        container('python') {
-          sh "pip install poetry" 
-          sh "poetry install"
-          sh "poetry run pytest"
-        }
-      }
-    }
+    // stage("TEST"){
+    //   steps {
+    //     container('python') {
+    //       sh "pip install poetry" 
+    //       sh "poetry install"
+    //       sh "poetry run pytest"
+    //     }
+    //   }
+    // }
 
     stage('Get GIT_COMMIT') {
       steps {
@@ -93,33 +96,33 @@ pipeline {
       }
     }
 
-    stage('docker-build') {
-      options {
-        timeout(time: 120, unit: 'SECONDS')
-      }
+    // stage('docker-build') {
+    //   options {
+    //     timeout(time: 120, unit: 'SECONDS')
+    //   }
 
-      steps {
-        sh '''#!/usr/bin/env bash
-          echo "Shell Process ID: $$"
-          git config --global user.email ${GITHUB_EMAIL}
-          git config --global user.name ${GITHUB_NAME}
-          echo pwd
-          rm -rf flask-argocd-k8s
-          git clone https://$GITHUB_ACC:$GITHUB_PWD@github.com/myangel26/flask-argocd-k8s.git
-          cd flask-argocd-k8s
-          ls -la
-        '''
-        container('docker'){
-          sh "docker build -t ${DOCKER_IMAGE}:${GIT_COMMIT} . "
-          withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-            sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
-            sh "docker push ${DOCKER_IMAGE}:${GIT_COMMIT}"
-          }
-          // clean to save disk
-          sh "docker image rm ${DOCKER_IMAGE}:${GIT_COMMIT}"
-        }
-      }
-    }
+    //   steps {
+    //     sh '''#!/usr/bin/env bash
+    //       echo "Shell Process ID: $$"
+    //       git config --global user.email ${GITHUB_EMAIL}
+    //       git config --global user.name ${GITHUB_NAME}
+    //       echo pwd
+    //       rm -rf flask-argocd-k8s
+    //       git clone https://$GITHUB_ACC:$GITHUB_PWD@github.com/myangel26/flask-argocd-k8s.git
+    //       cd flask-argocd-k8s
+    //       ls -la
+    //     '''
+    //     container('docker'){
+    //       sh "docker build -t ${DOCKER_IMAGE}:${GIT_COMMIT} . "
+    //       withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+    //         sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
+    //         sh "docker push ${DOCKER_IMAGE}:${GIT_COMMIT}"
+    //       }
+    //       // clean to save disk
+    //       sh "docker image rm ${DOCKER_IMAGE}:${GIT_COMMIT}"
+    //     }
+    //   }
+    // }
 
     stage('Deploy DEV') {
       steps {
