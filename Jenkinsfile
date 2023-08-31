@@ -100,13 +100,6 @@ pipeline {
       steps {
         sh '''#!/usr/bin/env bash
           echo "Shell Process ID: $$"
-          git config --global user.email ${GITHUB_EMAIL}
-          git config --global user.name ${GITHUB_NAME}
-          echo pwd
-          rm -rf flask-argocd-k8s
-          git clone https://$GITHUB_ACC:$GITHUB_PWD@github.com/myangel26/flask-argocd-k8s.git
-          cd flask-argocd-k8s
-          ls -la
         '''
         container('docker'){
           sh "docker build -t ${DOCKER_IMAGE}:${GIT_COMMIT} . "
@@ -124,6 +117,13 @@ pipeline {
       steps {
         sh '''#!/usr/bin/env bash
           echo "Shell Process ID: $$"
+          git config --global user.email ${GITHUB_EMAIL}
+          git config --global user.name ${GITHUB_NAME}
+          pwd
+          rm -rf flask-argocd-k8s
+          git clone https://$GITHUB_ACC:$GITHUB_PWD@github.com/myangel26/flask-argocd-k8s.git
+          cd flask-argocd-k8s
+          ls -la
         '''
       }
     }
