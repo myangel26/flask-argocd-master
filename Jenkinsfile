@@ -16,11 +16,18 @@ pipeline {
               volumeMounts:
               - mountPath: /root/.cache
                 name: python-cache
+            - name: docker
+              image: docker:latest
+              command:
+              - cat
+              tty: true
+              volumeMounts:
+              - mountPath: /var/run/docker.sock
+                name: docker-sock
           resources:
             requests:
               memory: "300Mi"
               cpu: "500m"
-              ephemeral-storage: "2.5Gi"
             limits:
               memory: "600Mi"
               cpu: "1" 
@@ -28,6 +35,9 @@ pipeline {
             - name: python-cache
               hostPath:
                 path: /tmp
+            - name: docker-sock
+              hostPath:
+                path: /var/run/docker.sock
       '''
     }
   }
@@ -43,8 +53,6 @@ pipeline {
     DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
     GITHUB_EMAIL = "truongphamxuan2604@gmail.com"
     GITHUB_NAME = "truong"
-    GITHUB_ACC = "${credentials('github-account').username}"
-    GITHUB_PWD = "${credentials('github-account').password}"
   }
 
   options {
@@ -84,33 +92,33 @@ pipeline {
       }
     }
 
-    // stage('docker-build') {
-    //   options {
-    //     timeout(time: 120, unit: 'SECONDS')
-    //   }
+    stage('docker-build') {
+      options {
+        timeout(time: 120, unit: 'SECONDS')
+      }
 
-    //   steps {
-    //     sh '''#!/usr/bin/env bash
-    //       echo "Shell Process ID: $$"
-    //       git config --global user.email ${GITHUB_EMAIL}
-    //       git config --global user.name ${GITHUB_NAME}
-    //       echo pwd
-    //       rm -rf flask-argocd-k8s
-    //       git clone https://$GITHUB_ACC:$GITHUB_PWD@github.com/myangel26/flask-argocd-k8s.git
-    //       cd flask-argocd-k8s
-    //       ls -la
-    //     '''
-    //     container('docker'){
-    //       sh "docker build -t ${DOCKER_IMAGE}:${GIT_COMMIT} . "
-    //       withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-    //         sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
-    //         sh "docker push ${DOCKER_IMAGE}:${GIT_COMMIT}"
-    //       }
-    //       // clean to save disk
-    //       sh "docker image rm ${DOCKER_IMAGE}:${GIT_COMMIT}"
-    //     }
-    //   }
-    // }
+      steps {
+        sh '''#!/usr/bin/env bash
+          echo "Shell Process ID: $$"
+          git config --global user.email ${GITHUB_EMAIL}
+          git config --global user.name ${GITHUB_NAME}
+          echo pwd
+          rm -rf flask-argocd-k8s
+          git clone https://$GITHUB_ACC:$GITHUB_PWD@github.com/myangel26/flask-argocd-k8s.git
+          cd flask-argocd-k8s
+          ls -la
+        '''
+        container('docker'){
+          sh "docker build -t ${DOCKER_IMAGE}:${GIT_COMMIT} . "
+          withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+            sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
+            sh "docker push ${DOCKER_IMAGE}:${GIT_COMMIT}"
+          }
+          // clean to save disk
+          sh "docker image rm ${DOCKER_IMAGE}:${GIT_COMMIT}"
+        }
+      }
+    }
 
     stage('Deploy DEV') {
       steps {
