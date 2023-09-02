@@ -122,7 +122,8 @@ pipeline {
       steps {
         sh '''#!/usr/bin/env bash
           echo "Shell Process ID: $$"
-          rm -rf kustomize
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+          sudo mv kustomize /usr/local/bin/
           git config --global user.email ${GITHUB_EMAIL}
           git config --global user.name ${GITHUB_NAME}
           pwd
