@@ -24,6 +24,11 @@ pipeline {
               volumeMounts:
               - mountPath: /var/run/docker.sock
                 name: docker-sock
+            - name: kustomize
+              image: registry.k8s.io/kustomize/kustomize:v5.0.0
+              command:
+              - cat
+              tty: true
           resources:
             requests:
               memory: "300Mi"
@@ -117,7 +122,7 @@ pipeline {
       steps {
         sh '''#!/usr/bin/env bash
           echo "Shell Process ID: $$"
-          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+          rm -rf kustomize
           git config --global user.email ${GITHUB_EMAIL}
           git config --global user.name ${GITHUB_NAME}
           pwd
