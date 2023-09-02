@@ -60,7 +60,7 @@ pipeline {
     timeout(time: 15, unit: 'MINUTES') // sau 180 phút, pipeline sẽ được hủy
     ansiColor('xterm')
     disableConcurrentBuilds()
-    // buildDiscarder(logRotator(numToKeepStr: '250', daysToKeepStr: '5'))
+    buildDiscarder(logRotator(numToKeepStr: '3', daysToKeepStr: '3', artifactNumToKeepStr: '5'))
   }
 
   stages{
@@ -122,10 +122,9 @@ pipeline {
           pwd
           rm -rf flask-argocd-k8s
           git clone https://$GITHUB_ACC:$GITHUB_PWD@github.com/myangel26/flask-argocd-k8s.git
-          cd flask-argocd-k8s
-          ls -la
           git branch --show-current
-          cd argocd-k8s-manifest/overlays/dev && kustomize edit set image ${DOCKER_IMAGE}:${GIT_COMMIT}
+          cd flask-argocd-k8s/overlays/dev && kustomize edit set image ${DOCKER_IMAGE}:${GIT_COMMIT}
+          ls -la
           git commit -m 'Publish new version' && git push origin master || echo 'no changes'
         '''
       }
