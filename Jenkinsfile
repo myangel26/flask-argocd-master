@@ -136,9 +136,12 @@ pipeline {
           git branch --show-current
         '''
         withKubeConfig([credentialsId: "${KUBERNETES_CONFIG}"]) {
-          sh "cd flask-argocd-k8s/overlays/dev && ./kubectl kustomize edit set image ${DOCKER_IMAGE}:${GIT_COMMIT}"
-          sh "ls -la"
-          sh "git commit -m 'Publish new version' && git push origin master || echo 'no changes'"
+          sh '''
+            cd flask-argocd-k8s/overlays/dev
+            ./kubectl kustomize edit set image ${DOCKER_IMAGE}:${GIT_COMMIT}
+            ls -la
+            git commit -m 'Publish new version' && git push origin master || echo 'no changes'
+          '''
         }
       }
     }
