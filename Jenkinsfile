@@ -24,11 +24,6 @@ pipeline {
               volumeMounts:
               - mountPath: /var/run/docker.sock
                 name: docker-sock
-            - name: busybox
-              image: busybox:latest
-              command:
-              - cat
-              tty: true
           resources:
             requests:
               memory: "300Mi"
@@ -120,22 +115,19 @@ pipeline {
 
     stage('Deploy DEV') {
       steps {
-        sh 'rm -rf kustomize'
-        container('busybox'){
-          sh '''#!/usr/bin/env bash
-            echo "Shell Process ID: $$"
-            git config --global user.email ${GITHUB_EMAIL}
-            git config --global user.name ${GITHUB_NAME}
-            pwd
-            rm -rf flask-argocd-k8s
-            git clone https://$GITHUB_ACC:$GITHUB_PWD@github.com/myangel26/flask-argocd-k8s.git
-            git branch --show-current
-            cd flask-argocd-k8s/overlays/dev && kustomize edit set image ${DOCKER_IMAGE}:${GIT_COMMIT}
-            ls -la
-            git commit -m 'Publish new version' && git push origin master || echo 'no changes'
-          '''
-        }
-        
+        sh './kubectl version'
+        sh '''#!/usr/bin/env bash
+          echo "Shell Process ID: $$"
+          git config --global user.email ${GITHUB_EMAIL}
+          git config --global user.name ${GITHUB_NAME}
+          pwd
+          rm -rf flask-argocd-k8s
+          git clone https://$GITHUB_ACC:$GITHUB_PWD@github.com/myangel26/flask-argocd-k8s.git
+          git branch --show-current
+          cd flask-argocd-k8s/overlays/dev && kustomize edit set image ${DOCKER_IMAGE}:${GIT_COMMIT}
+          ls -la
+          git commit -m 'Publish new version' && git push origin master || echo 'no changes'
+        '''
       }
     }
 
