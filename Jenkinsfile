@@ -125,24 +125,19 @@ pipeline {
 
     stage('Deploy DEV') {
       steps {
-        sh './kubectl version'
         sh '''#!/usr/bin/env bash
           echo "Shell Process ID: $$"
+          export KUBECTL_PATH=$(pwd)"/kubectl"
           git config --global user.email ${GITHUB_EMAIL}
           git config --global user.name ${GITHUB_NAME}
           pwd
           rm -rf flask-argocd-k8s
           git clone https://$GITHUB_ACC:$GITHUB_PWD@github.com/myangel26/flask-argocd-k8s.git
           git branch --show-current
+          cd flask-argocd-k8s/overlays/dev && KUBECTL_PATH kustomize edit set image ${DOCKER_IMAGE}:${GIT_COMMIT}
+          ls -la
+          git commit -m 'Publish new version' && git push origin master || echo 'no changes'
         '''
-        withKubeConfig([credentialsId: "${KUBERNETES_CONFIG}"]) {
-          sh '''
-            cd flask-argocd-k8s/overlays/dev
-            ./kubectl kustomize edit set image ${DOCKER_IMAGE}:${GIT_COMMIT}
-            ls -la
-            git commit -m 'Publish new version' && git push origin master || echo 'no changes'
-          '''
-        }
       }
     }
 
