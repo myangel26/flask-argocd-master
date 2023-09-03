@@ -118,8 +118,8 @@ pipeline {
         withKubeConfig([credentialsId: "${KUBERNETES_CONFIG}"]) {
           // sh 'curl -LO "https://dl.k8s.io/release/`curl -LS https://dl.k8s.io/release/stable.txt`/bin/linux/amd64/kubectl"'
           sh 'curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash'
-          sh 'chmod u+x ./kubectl'
-          sh './kubectl version'
+          // sh 'chmod u+x ./kubectl'
+          // sh './kubectl version'
           sh 'pwd'
           sh 'ls -la'
         }
