@@ -118,8 +118,9 @@ pipeline {
         withKubeConfig([credentialsId: "${KUBERNETES_CONFIG}"]) {
           sh 'curl -LO "https://dl.k8s.io/release/`curl -LS https://dl.k8s.io/release/stable.txt`/bin/linux/amd64/kubectl"'
           sh 'chmod u+x ./kubectl'
-          sh 'sudo mv kubectl /usr/local/bin/'
           sh './kubectl version'
+          sh 'pwd'
+          sh 'ls -la'
         }
       }
     }
