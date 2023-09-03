@@ -135,7 +135,7 @@ pipeline {
           rm -rf flask-argocd-k8s
           git clone https://$GITHUB_ACC:$GITHUB_PWD@github.com/myangel26/flask-argocd-k8s.git
           git branch --show-current
-          ./kubectl kustomize ../flask-argocd-k8s/overlays/dev/kustomization.yaml edit set image ${DOCKER_IMAGE}:${GIT_COMMIT}
+          ./kubectl kustomize ../flask-argocd-k8s/overlays/dev/ edit set image ${DOCKER_IMAGE}:${GIT_COMMIT}
           ls -la
           cd flask-argocd-k8s/overlays/dev && git commit -m 'Publish new version' && git push origin master || echo 'no changes'
         '''
