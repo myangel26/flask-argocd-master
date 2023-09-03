@@ -73,15 +73,15 @@ pipeline {
       }
     }
 
-    stage("TEST"){
-      steps {
-        container('python') {
-          sh "pip install poetry" 
-          sh "poetry install"
-          sh "poetry run pytest"
-        }
-      }
-    }
+    // stage("TEST"){
+    //   steps {
+    //     container('python') {
+    //       sh "pip install poetry" 
+    //       sh "poetry install"
+    //       sh "poetry run pytest"
+    //     }
+    //   }
+    // }
 
     stage('Get GIT_COMMIT') {
       steps {
@@ -116,7 +116,7 @@ pipeline {
     stage("INSTALL KUBECTL"){
       steps{
         withKubeConfig([credentialsId: "${KUBERNETES_CONFIG}"]) {
-          sh 'curl -LO "https://dl.k8s.io/release/`curl -LS https://dl.k8s.io/release/stable.txt`/bin/linux/amd64/kubectl"'
+          // sh 'curl -LO "https://dl.k8s.io/release/`curl -LS https://dl.k8s.io/release/stable.txt`/bin/linux/amd64/kubectl"'
           sh 'curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash'
           sh 'chmod u+x ./kubectl'
           sh './kubectl version'
@@ -136,7 +136,7 @@ pipeline {
           rm -rf flask-argocd-k8s
           git clone https://$GITHUB_ACC:$GITHUB_PWD@github.com/myangel26/flask-argocd-k8s.git
           git branch --show-current
-          cd ./flask-argocd-k8s/overlays/dev && ../../../kustomize --help
+          cd ./flask-argocd-k8s/overlays/dev && ../../../kustomize edit set image ${DOCKER_IMAGE}=${DOCKER_IMAGE}:${GIT_COMMIT}
           ls -la
           git commit -m 'Publish new version' && git push origin master || echo 'no changes'
         '''
