@@ -53,7 +53,7 @@ pipeline {
     DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
     GITHUB_EMAIL = "truongphamxuan2604@gmail.com"
     GITHUB_NAME = "truong"
-    CREDENTIAL_GITHUB = "github-account"
+    CREDENTIAL_GITHUB = "github-account-token"
   }
 
   options {
@@ -142,7 +142,7 @@ pipeline {
             git branch --show-current
             cd ./flask-argocd-k8s/overlays/dev && ../../../kustomize edit set image ${DOCKER_IMAGE}=${DOCKER_IMAGE}:${GIT_COMMIT}
             ls -la
-            git commit -am 'Publish new version' && git push https://$GITHUB_USERNAME:$GITHUB_PASSWORD@github.com/myangel26/flask-argocd-k8s.git master || echo 'no changes'
+            git commit -am 'Publish new version' && git push origin master || echo 'no changes'
           '''
         }
       }
