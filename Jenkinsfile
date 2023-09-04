@@ -53,6 +53,7 @@ pipeline {
     DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
     GITHUB_EMAIL = "truongphamxuan2604@gmail.com"
     GITHUB_NAME = "truong"
+    CREDENTIAL_GITHUB = "github-account"
   }
 
   options {
@@ -133,13 +134,17 @@ pipeline {
           git config --global user.email ${GITHUB_EMAIL}
           git config --global user.name ${GITHUB_NAME}
           pwd
-          rm -rf flask-argocd-k8s
-          git clone https://$GITHUB_ACC:$GITHUB_PWD@github.com/myangel26/flask-argocd-k8s.git
-          git branch --show-current
-          cd ./flask-argocd-k8s/overlays/dev && ../../../kustomize edit set image ${DOCKER_IMAGE}=${DOCKER_IMAGE}:${GIT_COMMIT}
-          ls -la
-          git commit -am 'Publish new version' && git push origin master || echo 'no changes'
         '''
+       withCredentials([usernamePassword(credentialsId: CREDENTIAL_GITHUB, passwordVariable: 'GITHUB_PASSWORD', usernameVariable: 'GITHUB_USERNAME')]) {
+          sh '''
+            rm -rf flask-argocd-k8s
+            git clone https://$GITHUB_USERNAME:$GITHUB_PASSWORD@github.com/myangel26/flask-argocd-k8s.git
+            git branch --show-current
+            cd ./flask-argocd-k8s/overlays/dev && ../../../kustomize edit set image ${DOCKER_IMAGE}=${DOCKER_IMAGE}:${GIT_COMMIT}
+            ls -la
+            git commit -am 'Publish new version' && git push origin master || echo 'no changes'
+          '''
+        }
       }
     }
     // ./kubectl kustomize ../flask-argocd-k8s/overlays/dev/ edit set image ${DOCKER_IMAGE}=${DOCKER_IMAGE}:${GIT_COMMIT}
