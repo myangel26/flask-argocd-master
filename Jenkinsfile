@@ -142,8 +142,8 @@ pipeline {
             sh """
               git branch --show-current
               cd ./flask-argocd-k8s/overlays/dev && ../../../kustomize edit set image ${DOCKER_IMAGE}=${DOCKER_IMAGE}:${DK_TAG}
-              // ls -la
-              // git commit -am 'Publish new version' && git push origin master || echo 'no changes'
+              ls -la
+              git commit -am 'Publish new version' && git push origin master || echo 'no changes'
             """
           }
         }
