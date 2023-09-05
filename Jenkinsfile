@@ -138,7 +138,7 @@ pipeline {
        withCredentials([usernamePassword(credentialsId: CREDENTIAL_GITHUB, passwordVariable: 'GITHUB_PASSWORD', usernameVariable: 'GITHUB_USERNAME')]) {
           script {
             def DK_TAG = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
-            echo "DK_TAG: ${DK_TAG}"
+            echo "DK_TAG=>>>: ${DK_TAG}"
             // sh '''
             //   rm -rf flask-argocd-k8s
             //   git clone https://$GITHUB_USERNAME:$GITHUB_PASSWORD@github.com/myangel26/flask-argocd-k8s.git
