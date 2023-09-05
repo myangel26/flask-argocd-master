@@ -136,10 +136,10 @@ pipeline {
           pwd
         '''
        withCredentials([usernamePassword(credentialsId: CREDENTIAL_GITHUB, passwordVariable: 'GITHUB_PASSWORD', usernameVariable: 'GITHUB_USERNAME')]) {
-          sh "echo DK_TAG: ${DK_TAG}"
           sh "rm -rf flask-argocd-k8s"
-          sh "git clone https://${GITHUB_USERNAME}:${GITHUB_PASSWORD}@github.com/myangel26/flask-argocd-k8s.git"
+          sh 'git clone https://$GITHUB_USERNAME:$GITHUB_PASSWORD@github.com/myangel26/flask-argocd-k8s.git'
           sh "git branch --show-current"  
+          sh "echo DK_TAG: ${DK_TAG}"
           sh "cd ./flask-argocd-k8s/overlays/dev && ../../../kustomize edit set image ${DOCKER_IMAGE}=${DOCKER_IMAGE}:${DK_TAG}" 
           sh "ls -la"  
           sh "git commit -am 'Publish new version' && git push origin master || echo 'no changes'"  
