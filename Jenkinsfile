@@ -87,8 +87,8 @@ pipeline {
     stage('Get GIT_COMMIT') {
       steps {
         script {
-          GIT_COMMIT = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
-          sh "echo GIT_COMMIT: ${GIT_COMMIT}"
+          DK_TAG = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
+          sh "echo DK_TAG: ${DK_TAG}"
         }
       }
     }
@@ -103,13 +103,13 @@ pipeline {
           echo "Shell Process ID: $$"
         '''
         container('docker'){
-          sh "docker build -t ${DOCKER_IMAGE}:${GIT_COMMIT} . "
+          sh "docker build -t ${DOCKER_IMAGE}:${DK_TAG} . "
           withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
             sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
-            sh "docker push ${DOCKER_IMAGE}:${GIT_COMMIT}"
+            sh "docker push ${DOCKER_IMAGE}:${DK_TAG}"
           }
           // clean to save disk
-          sh "docker image rm ${DOCKER_IMAGE}:${GIT_COMMIT}"
+          sh "docker image rm ${DOCKER_IMAGE}:${DK_TAG}"
         }
       }
     }
@@ -140,8 +140,8 @@ pipeline {
             rm -rf flask-argocd-k8s
             git clone https://$GITHUB_USERNAME:$GITHUB_PASSWORD@github.com/myangel26/flask-argocd-k8s.git
             git branch --show-current
-            echo GIT_COMMIT: ${GIT_COMMIT}
-            cd ./flask-argocd-k8s/overlays/dev && ../../../kustomize edit set image ${DOCKER_IMAGE}=${DOCKER_IMAGE}:${GIT_COMMIT}
+            echo DK_TAG: ${DK_TAG}
+            cd ./flask-argocd-k8s/overlays/dev && ../../../kustomize edit set image ${DOCKER_IMAGE}=${DOCKER_IMAGE}:${DK_TAG}
             ls -la
             git commit -am 'Publish new version' && git push origin master || echo 'no changes'
           '''
